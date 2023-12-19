@@ -7,7 +7,7 @@ class VldMailTest < Minitest::Test
     refute_nil ::VldMail::VERSION
   end
 
-  def test_it_does_something_useful
-    assert false
+  def test_instantiation
+    assert VldMail::Validation.new.is_a?(VldMail::Validation)
   end
 end
