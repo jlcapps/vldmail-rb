@@ -21,7 +21,7 @@ Start at ruby-lang.org and read for a high-level understanding. Then try the blo
 
 Then there's this project: I wrote each commit to document the process of making the gem -- sort of a really slow motion live-coding presentation. (And like any live-coding, this one includes a few missteps....) So head over to Commits and work from the bottom up.
 
-Yeah, this probably be a blog post, but I haven't finished rewriting my blog engine yet. ;-)
+Yeah, this could probably be a blog post, but I haven't finished rewriting my blog engine yet. ;-)
 
 ## Installation
 
