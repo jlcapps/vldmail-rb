@@ -14,6 +14,9 @@ static VALUE allocate(VALUE klass) {
 static VALUE initialize(VALUE self, VALUE rb_email_string) {
     Check_Type(rb_email_string, T_STRING);
 
+    ID id = rb_intern("@email");
+    rb_ivar_set(self, id, rb_email_string);
+
     valid_mail_t * c_validation;
     Data_Get_Struct(self, valid_mail_t, c_validation);
 
@@ -62,4 +65,8 @@ void Init_vldmail_validation() {
     rb_define_method(vm_cVldMailValidation, "initialize", initialize, 1);
     rb_define_method(vm_cVldMailValidation, "success?", success, 0);
     rb_define_method(vm_cVldMailValidation, "message", message, 0);
+
+    int is_read = 1;
+    int is_write = 0;
+    rb_define_attr(vm_cVldMailValidation, "email", is_read, is_write);
 }

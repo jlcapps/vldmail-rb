@@ -69,4 +69,10 @@ class VldMailTest < Minitest::Test
     refute validation.success?
     assert_equal 'Maximum email length is 320.', validation.message
   end
+
+  def test_email_attribute
+    email = 'foo@example.com'
+    validation = VldMail::Validation.new(email)
+    assert_equal email, validation.email
+  end
 end
