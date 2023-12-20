@@ -16,12 +16,15 @@ static VALUE initialize(VALUE self, VALUE rb_email_string) {
 
     valid_mail_t * c_validation;
     Data_Get_Struct(self, valid_mail_t, c_validation);
+
     if (RSTRING_LEN(rb_email_string) <= 320) {
         size_t email_length = RSTRING_LEN(rb_email_string) + 1;
         char * mbs_email = StringValuePtr(rb_email_string);
         wchar_t wcs_email[email_length];
         mbstowcs(wcs_email, mbs_email, email_length);
-        *c_validation = validate_email(wcs_email);
+        valid_mail_t result = validate_email(wcs_email);
+        c_validation->success = result.success;
+        wcscpy(c_validation->message, result.message);
     } else {
         c_validation->success = 0;
         wcscpy(c_validation->message, L"Maximum email length is 320.");
@@ -33,9 +36,8 @@ static VALUE initialize(VALUE self, VALUE rb_email_string) {
 static VALUE success(VALUE self) {
     valid_mail_t * c_validation;
     Data_Get_Struct(self, valid_mail_t, c_validation);
-    valid_mail_t value = *c_validation;
 
-    if (value.success == 0) {
+    if (c_validation->success == 0) {
         return Qfalse;
     } else {
         return Qtrue;
@@ -45,11 +47,10 @@ static VALUE success(VALUE self) {
 static VALUE message(VALUE self) {
     valid_mail_t * c_validation;
     Data_Get_Struct(self, valid_mail_t, c_validation);
-    valid_mail_t value = *c_validation;
 
-    size_t email_length = wcslen(value.message) + 1;
+    size_t email_length = wcslen(c_validation->message) + 1;
     char mbs_message[email_length];
-    wcstombs(mbs_message, value.message, email_length);
+    wcstombs(mbs_message, c_validation->message, email_length);
     mbs_message[strcspn(mbs_message, "\n")] = '\0'; // strip newline
 
     return rb_str_new_cstr(mbs_message);
