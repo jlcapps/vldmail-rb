@@ -8,6 +8,6 @@ class VldMailTest < Minitest::Test
   end
 
   def test_instantiation
-    assert VldMail::Validation.new.is_a?(VldMail::Validation)
+    assert VldMail::Validation.new('foo@example.com').is_a?(VldMail::Validation)
   end
 end
