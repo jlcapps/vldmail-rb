@@ -47,4 +47,26 @@ class VldMailTest < Minitest::Test
     assert_equal 'One @ is more than enough.',
                  VldMail::Validation.new(FAILURE_EMAILS.last).message
   end
+
+  def test_maximum_length
+    username = Array.new(64, 'u').join('')
+    host = Array.new(255, 'h').join('')
+    email = "#{username}@#{host}"
+    assert_equal 320, email.length
+
+    validation = VldMail::Validation.new(email)
+    assert validation.success?
+    assert_equal '', validation.message
+  end
+
+  def test_exceeding_maximum_length
+    username = Array.new(65, 'u').join('')
+    host = Array.new(255, 'h').join('')
+    email = "#{username}@#{host}"
+    assert_equal 321, email.length
+
+    validation = VldMail::Validation.new(email)
+    refute validation.success?
+    assert_equal 'Maximum email length is 320.', validation.message
+  end
 end

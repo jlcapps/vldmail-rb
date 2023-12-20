@@ -14,13 +14,18 @@ static VALUE allocate(VALUE klass) {
 static VALUE initialize(VALUE self, VALUE rb_email_string) {
     Check_Type(rb_email_string, T_STRING);
 
-    size_t email_length = RSTRING_LEN(rb_email_string) + 1;
-    char * mbs_email = StringValuePtr(rb_email_string);
-    wchar_t wcs_email[email_length];
-    mbstowcs(wcs_email, mbs_email, email_length);
     valid_mail_t * c_validation;
     Data_Get_Struct(self, valid_mail_t, c_validation);
-    *c_validation = validate_email(wcs_email);
+    if (RSTRING_LEN(rb_email_string) <= 320) {
+        size_t email_length = RSTRING_LEN(rb_email_string) + 1;
+        char * mbs_email = StringValuePtr(rb_email_string);
+        wchar_t wcs_email[email_length];
+        mbstowcs(wcs_email, mbs_email, email_length);
+        *c_validation = validate_email(wcs_email);
+    } else {
+        c_validation->success = 0;
+        wcscpy(c_validation->message, L"Maximum email length is 320.");
+    }
 
     return self;
 }
