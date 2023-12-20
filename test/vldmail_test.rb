@@ -34,4 +34,17 @@ class VldMailTest < Minitest::Test
       assert_equal false, VldMail::Validation.new(email).success?
     end
   end
+
+  def test_message
+    SUCCESS_EMAILS.each do |email|
+      assert_equal '', VldMail::Validation.new(email).message
+    end
+
+    FAILURE_EMAILS.each do |email|
+      refute_equal '', VldMail::Validation.new(email).message
+    end
+
+    assert_equal 'One @ is more than enough.',
+                 VldMail::Validation.new(FAILURE_EMAILS.last).message
+  end
 end

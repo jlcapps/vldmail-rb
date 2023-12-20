@@ -1,3 +1,4 @@
+#include <wchar.h>
 #include "vldmail_validation.h"
 
 static void deallocate(void * c_validation) {
@@ -36,9 +37,23 @@ static VALUE success(VALUE self) {
     }
 }
 
+static VALUE message(VALUE self) {
+    valid_mail_t * c_validation;
+    Data_Get_Struct(self, valid_mail_t, c_validation);
+    valid_mail_t value = *c_validation;
+
+    size_t email_length = wcslen(value.message) + 1;
+    char mbs_message[email_length];
+    wcstombs(mbs_message, value.message, email_length);
+    mbs_message[strcspn(mbs_message, "\n")] = '\0'; // strip newline
+
+    return rb_str_new_cstr(mbs_message);
+}
+
 void Init_vldmail_validation() {
     VALUE vm_cVldMailValidation = rb_define_class_under(vm_mVldMail, "Validation", rb_cObject);
     rb_define_alloc_func(vm_cVldMailValidation, allocate);
     rb_define_method(vm_cVldMailValidation, "initialize", initialize, 1);
     rb_define_method(vm_cVldMailValidation, "success?", success, 0);
+    rb_define_method(vm_cVldMailValidation, "message", message, 0);
 }
