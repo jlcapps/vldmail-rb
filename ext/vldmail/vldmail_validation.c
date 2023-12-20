@@ -24,8 +24,21 @@ static VALUE initialize(VALUE self, VALUE rb_email_string) {
     return self;
 }
 
+static VALUE success(VALUE self) {
+    valid_mail_t * c_validation;
+    Data_Get_Struct(self, valid_mail_t, c_validation);
+    valid_mail_t value = *c_validation;
+
+    if (value.success == 0) {
+        return Qfalse;
+    } else {
+        return Qtrue;
+    }
+}
+
 void Init_vldmail_validation() {
     VALUE vm_cVldMailValidation = rb_define_class_under(vm_mVldMail, "Validation", rb_cObject);
     rb_define_alloc_func(vm_cVldMailValidation, allocate);
     rb_define_method(vm_cVldMailValidation, "initialize", initialize, 1);
+    rb_define_method(vm_cVldMailValidation, "success?", success, 0);
 }
